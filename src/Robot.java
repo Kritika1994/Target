@@ -1,14 +1,14 @@
 
-public class Robot implements RoboConstants{
+public class Robot implements RoboConstants,RoboDriverInterface{
 	float robo_battery_percent;
 	boolean red_light;
-	float robo_weight_carried;
+	float roboWeightCarrier;
 	
 	
 	static class Builder{
 		float robo_battery_percent;
 		boolean red_light;
-		float robo_weight_carried;
+		float roboWeightCarrier;
 		
 		public float getRobo_battery_percent() {
 			return robo_battery_percent;
@@ -24,11 +24,11 @@ public class Robot implements RoboConstants{
 			this.red_light = red_light;
 			return this;
 		}
-		public float getRobo_weight_carried() {
-			return robo_weight_carried;
+		public float getRoboWeightCarrier() {
+			return roboWeightCarrier;
 		}
-		public Builder setRobo_weight_carried(float robo_weight_carried) {
-			this.robo_weight_carried = robo_weight_carried;
+		public Builder setRoboWeightCarrier(float robo_weight_carried) {
+			this.roboWeightCarrier = robo_weight_carried;
 			return this;
 		}
 		public static Builder getInstance() {
@@ -47,7 +47,7 @@ public class Robot implements RoboConstants{
 			if(robo_battery_percent<=0) {
 				robo_battery_percent=100;
 			}	
-			if(robo_weight_carried<0)
+			if(roboWeightCarrier<0)
 				return false;
 			return true;
         }
@@ -57,41 +57,69 @@ public class Robot implements RoboConstants{
         //if user object does not break any assumption of system
 		this.red_light=bp.red_light;
 		this.robo_battery_percent=bp.robo_battery_percent;
-		this.robo_weight_carried=bp.robo_weight_carried;
+		this.roboWeightCarrier=bp.roboWeightCarrier;
 	}
 	private Robot(){
-		
+		alertBadHealth();
 	}
 	public void addWeight(float weight) {
-		robo_weight_carried+=weight;
-		checkHealth();
+		if(weight<=0)
+			return;
+		roboWeightCarrier+=weight;
+		alertBadHealth();
 	}
 	public void reduceWeight(int weight) {
-		robo_weight_carried-=weight;
+		if(weight<=0)
+			return;
+		roboWeightCarrier-=weight;
 	}
 	public void makeRoboWalk(float distanceinKms) {
+		if(distanceinKms<=0)
+			return;
 		float batteryReducedDueToWalk = batteryReducedPerKm*distanceinKms;
-		float batteryReducedDueToWeight = batteryReducedDueToWalk*batteryReducedPerKg*robo_weight_carried;
+		float batteryReducedDueToWeight = batteryReducedDueToWalk*batteryReducedPerKg*roboWeightCarrier;
 		robo_battery_percent = robo_battery_percent - batteryReducedDueToWalk - batteryReducedDueToWeight;
 		if(robo_battery_percent<0)
 			robo_battery_percent=0;
-		checkHealth();
+		alertBadHealth();
+		displayRemainingBattery();
 	}
 	public void charge() {
 		robo_battery_percent=full;
 		red_light=false;
 	}
 	public void checkHealth() {
+		if(!alertBadHealth())
+			display(goodHealthyRobot);
+	}
+	
+	public boolean alertBadHealth() {
+		if(checkBattery()) {
+			return true;
+		}
+		if(checkWeight()) {
+			 return true;
+		}		
+		return false;
+	}
+	public boolean checkWeight() {
+		if(roboWeightCarrier>robo_overweight_threshold) {
+			 display(Overweight);
+			 return true;
+		}
+		return false;
+	}
+	
+	public boolean checkBattery() {
 		if(robo_battery_percent<red_light_threshold) {
 			red_light=true;
-			display(low_battery);	
+			 display(low_battery);	
+			return true;
 		}
-		else
-			display(batteryRemaining+robo_battery_percent);
-		if(robo_weight_carried>robo_overweight_threshold) {
-			display(Overweight);	
-		}		
-		System.out.println();
+		return false;
+	}
+	public void displayRemainingBattery() {
+		display(batteryRemaining+robo_battery_percent);
 	}
 	public void scanItems(Item item){
 		//Call API's to scan items.
@@ -100,35 +128,9 @@ public class Robot implements RoboConstants{
 		else
 			display(scanFailure);
 	}
-	private String display(String message) {
-		System.out.println(message);
-		return message;
-	}
-	
-	public static void main(String args[]) {
-		Robot robo101 =  Robot.Builder.getInstance().setRobo_battery_percent(100).setRobo_weight_carried(2).build();
+	private void display(String message) {
 		
-	}
-}
-
-class Item{
-	String name;
-	float price;
-	boolean scan;
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public float getPrice() {
-		return price;
-	}
-	public void setPrice(int price) {
-		this.price = price;
-	}
-	public boolean scanItem() {
-		//scan can be either success or failure.
-		return false;
+		System.out.println(message);
+		System.out.println();
 	}
 }

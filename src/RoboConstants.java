@@ -9,5 +9,5 @@ public interface RoboConstants {
 	int batteryReducedPerKm=20;
 	float batteryReducedPerKg=0.02f;
 	String batteryRemaining = "Remaining Battery Percentage: ";
+	String goodHealthyRobot = "Robot is in good condition";
 }
-//
