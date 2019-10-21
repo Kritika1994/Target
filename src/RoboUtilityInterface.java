@@ -1,5 +1,5 @@
 
-public interface RoboConstants {
+public interface RoboUtilityInterface {
 	int robo_overweight_threshold=10;
 	String Overweight="Overweight";
 	int full=100;

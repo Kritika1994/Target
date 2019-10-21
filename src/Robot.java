@@ -1,5 +1,5 @@
 
-public class Robot implements RoboConstants,RoboDriverInterface{
+public class Robot implements RoboUtilityInterface,RoboDriverInterface{
 	float robo_battery_percent;
 	boolean red_light;
 	float roboWeightCarrier;
