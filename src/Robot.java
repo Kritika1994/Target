@@ -100,7 +100,7 @@ public class Robot implements RoboConstants{
 		else
 			display(scanFailure);
 	}
-	public String display(String message) {
+	private String display(String message) {
 		System.out.println(message);
 		return message;
 	}

@@ -10,3 +10,4 @@ public interface RoboConstants {
 	float batteryReducedPerKg=0.02f;
 	String batteryRemaining = "Remaining Battery Percentage: ";
 }
+//
